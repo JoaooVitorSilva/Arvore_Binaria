@@ -130,7 +130,7 @@ void liberar_arvore(No* raiz) {
 }
 
 // ============================================================
-//  MAIN
+//  MAIN — MENU INTERATIVO
 // ============================================================
 
 void separador(const char* titulo) {
@@ -139,63 +139,91 @@ void separador(const char* titulo) {
     printf("========================================\n");
 }
 
+void exibir_menu(void) {
+    printf("\n--- MENU ---\n");
+    printf("1. Inserir valor\n");
+    printf("2. Remover valor\n");
+    printf("3. Buscar valor\n");
+    printf("4. Exibir percursos\n");
+    printf("5. Informações da árvore\n");
+    printf("0. Sair\n");
+    printf("Escolha: ");
+}
+
 int main(void) {
     No* raiz = NULL;
+    int opcao, valor;
 
-    // --- Inserção ---
-    separador("INSERINDO VALORES");
-    int valores[] = {50, 30, 70, 20, 40, 60, 80};
-    int n = sizeof(valores) / sizeof(valores[0]);
+    printf("========================================\n");
+    printf("   ÁRVORE BINÁRIA DE BUSCA (BST)\n");
+    printf("========================================\n");
 
-    for (int i = 0; i < n; i++) {
-        raiz = inserir(raiz, valores[i]);
-        printf("Inserido: %d\n", valores[i]);
-    }
+    do {
+        exibir_menu();
+        scanf("%d", &opcao);
 
-    /*
-     * Árvore resultante:
-     *
-     *         50
-     *        /  \
-     *      30    70
-     *     / \   / \
-     *   20  40 60  80
-     */
+        switch (opcao) {
+            case 1:
+                printf("Digite o valor a inserir: ");
+                scanf("%d", &valor);
+                raiz = inserir(raiz, valor);
+                printf("Valor %d inserido.\n", valor);
+                break;
 
-    // --- Percursos ---
-    separador("PERCURSOS");
-    printf("Pré-Ordem  (raiz→esq→dir): "); pre_ordem(raiz);  printf("\n");
-    printf("Em-Ordem   (esq→raiz→dir): "); em_ordem(raiz);   printf("\n");
-    printf("Pós-Ordem  (esq→dir→raiz): "); pos_ordem(raiz);  printf("\n");
+            case 2:
+                if (raiz == NULL) {
+                    printf("A árvore está vazia.\n");
+                    break;
+                }
+                printf("Digite o valor a remover: ");
+                scanf("%d", &valor);
+                raiz = remover(raiz, valor);
+                printf("Operação de remoção concluída.\n");
+                break;
 
-    // --- Informações ---
-    separador("INFORMAÇÕES DA ÁRVORE");
-    printf("Altura    : %d\n", altura(raiz));
-    printf("Total nós : %d\n", contar_nos(raiz));
+            case 3:
+                if (raiz == NULL) {
+                    printf("A árvore está vazia.\n");
+                    break;
+                }
+                printf("Digite o valor a buscar: ");
+                scanf("%d", &valor);
+                printf("Resultado: %s\n", buscar(raiz, valor) ? "Encontrado ✓" : "Não encontrado ✗");
+                break;
 
-    // --- Busca ---
-    separador("BUSCA");
-    int val = 40;
-    printf("Buscando %d: %s\n", val, buscar(raiz, val) ? "Encontrado" : "Não encontrado");
-    val = 99;
-    printf("Buscando %d: %s\n", val, buscar(raiz, val) ? "Encontrado" : "Não encontrado");
+            case 4:
+                if (raiz == NULL) {
+                    printf("A árvore está vazia.\n");
+                    break;
+                }
+                separador("PERCURSOS");
+                printf("Pré-Ordem  (raiz→esq→dir): "); pre_ordem(raiz); printf("\n");
+                printf("Em-Ordem   (esq→raiz→dir): "); em_ordem(raiz);  printf("\n");
+                printf("Pós-Ordem  (esq→dir→raiz): "); pos_ordem(raiz); printf("\n");
+                break;
 
-    // --- Remoção ---
-    separador("REMOÇÃO");
-    printf("Removendo 20 (folha)...          ");
-    raiz = remover(raiz, 20); em_ordem(raiz); printf("\n");
+            case 5:
+                if (raiz == NULL) {
+                    printf("A árvore está vazia.\n");
+                    break;
+                }
+                separador("INFORMAÇÕES DA ÁRVORE");
+                printf("Altura    : %d\n", altura(raiz));
+                printf("Total nós : %d\n", contar_nos(raiz));
+                break;
 
-    printf("Removendo 30 (um filho)...       ");
-    raiz = remover(raiz, 30); em_ordem(raiz); printf("\n");
+            case 0:
+                printf("\nLiberando memória e encerrando...\n");
+                liberar_arvore(raiz);
+                raiz = NULL;
+                printf("Até mais!\n\n");
+                break;
 
-    printf("Removendo 50 (dois filhos)...    ");
-    raiz = remover(raiz, 50); em_ordem(raiz); printf("\n");
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
 
-    // --- Limpeza ---
-    separador("LIBERANDO MEMÓRIA");
-    liberar_arvore(raiz);
-    raiz = NULL;
-    printf("Memória liberada com sucesso.\n\n");
+    } while (opcao != 0);
 
     return 0;
 }
